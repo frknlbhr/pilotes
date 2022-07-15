@@ -5,6 +5,7 @@ import com.tui.proof.dto.SignupRequest;
 import com.tui.proof.dto.UserInfoJwtWrapper;
 import com.tui.proof.dto.UserInfoResponse;
 import com.tui.proof.service.AuthenticationService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class AuthController {
         this.authenticationService = authenticationService;
     }
 
+    @Operation(hidden = true)
     @PostMapping("/signin")
     public ResponseEntity<UserInfoResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         UserInfoJwtWrapper userInfoJwtWrapper = authenticationService.authenticateUser(loginRequest);
@@ -33,11 +35,13 @@ public class AuthController {
                 .body(userInfoJwtWrapper.getUserInfoResponse());
     }
 
+    @Operation(hidden = true)
     @PostMapping("/signup")
     public ResponseEntity<String> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
         return ResponseEntity.ok().body(authenticationService.registerUser(signupRequest));
     }
 
+    @Operation(hidden = true)
     @PostMapping("/signout")
     public ResponseEntity<String> logoutUser() {
         UserInfoJwtWrapper userInfoJwtWrapper = authenticationService.logoutUser();
