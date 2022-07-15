@@ -15,7 +15,7 @@ public class OpenApiConfig {
                         .in("header")
                         .required(true)
                         .description("jwt cookie")
-                        .name("Set-Cookie"));
+                        .name("Cookie"));
     }
 
 }
