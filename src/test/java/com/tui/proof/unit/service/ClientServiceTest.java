@@ -56,6 +56,15 @@ public class ClientServiceTest {
     }
 
     @Test
+    public void test_createNewClient() {
+        Mockito.when(clientRepository.save(Mockito.isA(Client.class))).thenReturn(clientFromMockedRepo);
+        Client client = clientService.createNewClient(userMocked, "name", "surname", null);
+        Assertions.assertEquals(clientFromMockedRepo.getId(), client.getId());
+        Assertions.assertEquals(clientFromMockedRepo.getName(), client.getName());
+        Mockito.verify(clientRepository, Mockito.times(1)).save(Mockito.isA(Client.class));
+    }
+
+    @Test
     public void test_findClientByUser_success() {
         Mockito.when(clientRepository.findByUser(Mockito.isA(User.class))).thenReturn(clientFromMockedRepo);
 
@@ -64,6 +73,25 @@ public class ClientServiceTest {
         Assertions.assertEquals(clientFromMockedRepo.getUser().getUsername(), result.getUser().getUsername());
         Assertions.assertEquals(clientFromMockedRepo.getUser().getEmail(), result.getUser().getEmail());
         Mockito.verify(clientRepository, Mockito.times(1)).findByUser(Mockito.isA(User.class));
+    }
+
+    @Test
+    public void test_getLoggedInClient_null() {
+        Mockito.when(userService.getLoggedInUser()).thenReturn(null);
+        Client client = clientService.getLoggedInClient();
+        Assertions.assertNull(client);
+        Mockito.verify(userService, Mockito.times(1)).getLoggedInUser();
+    }
+
+    @Test
+    public void test_getLoggedInClient() {
+        Mockito.when(userService.getLoggedInUser()).thenReturn(userMocked);
+        Mockito.when(clientRepository.findByUser(Mockito.isA(User.class))).thenReturn(clientFromMockedRepo);
+        Client client = clientService.getLoggedInClient();
+        Assertions.assertNotNull(client);
+        Assertions.assertNotNull(client.getUser());
+        Assertions.assertEquals(clientFromMockedRepo.getId(), client.getId());
+        Mockito.verify(userService, Mockito.times(1)).getLoggedInUser();
     }
 
 }
